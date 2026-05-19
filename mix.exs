@@ -5,6 +5,7 @@ defmodule BowlingGame.MixProject do
     [
       app: :bowling_game,
       version: "0.1.0",
+      description: "The now classic bowling game kata by Bob Martin, implemented in Elixir.",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps()
