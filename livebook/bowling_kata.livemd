@@ -1,0 +1,85 @@
+# Bowling Game Kata
+
+```elixir
+Mix.install([{:bowling_game, path: Path.expand("..", __DIR__)}])
+```
+
+## The rules in one minute
+
+A game has 10 frames. Each frame has up to two rolls to knock down 10 pins.
+
+* **Strike (X)**: all 10 pins on the first roll. Scores 10 plus the next **two** rolls.
+* **Spare (/)**: all 10 pins in two rolls. Scores 10 plus the next **one** roll.
+* **Open frame**: scores the pins knocked down.
+* **10th frame**: a strike or spare earns bonus balls (max 21 rolls in a game).
+
+## Rolling
+
+`roll/2` validates every roll and returns `{:ok, game}` or `{:error, reason}`.
+Use `roll!/2` when you would rather raise.
+
+```elixir
+game = BowlingGame.new()
+
+{:ok, game} = BowlingGame.roll(game, 7)
+{:ok, game} = BowlingGame.roll(game, 3)
+
+BowlingGame.roll(game, 11)
+```
+
+```elixir
+# Only 4 pins are standing after a 6, so a 5 is impossible.
+game = BowlingGame.roll!(BowlingGame.new(), 6)
+
+{BowlingGame.pins_standing(game), BowlingGame.roll(game, 5)}
+```
+
+## Scoring as you go
+
+A strike or spare waits for its bonus rolls, so the score only grows once they
+are known. An unfinished game never crashes.
+
+```elixir
+rolls = [10, 7, 3, 9, 0]
+
+for count <- 1..length(rolls) do
+  game = Enum.reduce(Enum.take(rolls, count), BowlingGame.new(), &BowlingGame.roll!(&2, &1))
+  {Enum.take(rolls, count), BowlingGame.score(game)}
+end
+```
+
+## The score card
+
+```elixir
+game = Enum.reduce([10, 7, 3, 9, 0], BowlingGame.new(), &BowlingGame.roll!(&2, &1))
+
+game |> BowlingGame.Scoreboard.render() |> IO.puts()
+```
+
+`frames/1` gives the same information as data:
+
+```elixir
+BowlingGame.frames(game)
+```
+
+## A perfect game
+
+```elixir
+perfect = Enum.reduce(1..12, BowlingGame.new(), fn _, g -> BowlingGame.roll!(g, 10) end)
+
+IO.puts(BowlingGame.Scoreboard.render(perfect))
+{BowlingGame.score(perfect), BowlingGame.game_over?(perfect)}
+```
+
+## Play it yourself
+
+Change the list below and re-evaluate the cell.
+
+```elixir
+my_rolls = [10, 10, 5, 4, 8, 2, 7, 1]
+
+my_game = Enum.reduce(my_rolls, BowlingGame.new(), &BowlingGame.roll!(&2, &1))
+
+IO.puts(BowlingGame.Scoreboard.render(my_game))
+{BowlingGame.score(my_game), BowlingGame.pins_standing(my_game)}
+```
