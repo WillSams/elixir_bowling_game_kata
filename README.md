@@ -24,12 +24,25 @@ I've created a simple shell script that can be followed along on Linux, Mac, or 
 [2]: http://butunclebob.com/ArticleS.UncleBob.TheBowlingGameKata
 [3]: ./docs/kata.sh
 
+## Features
+
+* **Validated rolls** - `BowlingGame.roll/2` returns `{:ok, game}` or `{:error, reason}` (`:invalid_pins`, `:too_many_pins`, `:game_over`); `roll!/2` raises instead.
+* **Scoring at any point** - `score/1` never crashes on an unfinished game; strikes and spares count once their bonus rolls are in.
+* **Frame by frame** - `frames/1`, `pins_standing/1` and `game_over?/1` expose the state of the game.
+* **Score card** - `BowlingGame.Scoreboard.render/1` prints the classic `X`, `/`, `-` card.
+* **Play in the terminal** - `mix bowling` (type pins, `x` for a strike, `/` for a spare, `new`, `q`).
+* **Livebook** - open [`livebook/bowling_kata.livemd`](./livebook/bowling_kata.livemd) for an interactive walk through the kata.
+* **Property-based tests** - StreamData checks random games against the kata's original recursive scorer.
+* **Typespecs and doctests** - every public function is specced and documented with runnable examples.
+
 **Table of Contents**:
 
 * [Prerequisites](#prerequisites)
 * [Getting Started](#getting-started)
     - [Install Dependencies](#install-dependencies)
 * [Testing](#testing)
+* [Play](#play)
+* [Dialyzer](#dialyzer)
 * [License](#license)
 
 ## Prerequisites
@@ -60,6 +73,16 @@ To run the tests, simply enter the following command in your terminal:
 ```bash
 mix test
 ```
+
+## Play
+
+    mix bowling
+
+## Dialyzer
+
+    mix dialyzer
+
+The first run builds a PLT and takes a few minutes.
 
 ## License
 
